@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import classes from './App.css';
 import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
+import withClass from '../hoc/withClass';
+import Aux from '../hoc/Aux';
 
 
 class App extends Component {
@@ -17,7 +19,9 @@ class App extends Component {
       { id: 'asdf11', name: 'Stephanie', age: 26 },
     ],
     otherState: 'some other value',
-    showPersons: false
+    showPersons: false,
+    showCockpit: true,
+    changeCounter: 0,
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -30,7 +34,7 @@ class App extends Component {
   // }
 
   componentDidMount() {
-    console.log('[App.js] componenetDidMount');
+    console.log('[App.js] componetDidMount');
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -39,7 +43,7 @@ class App extends Component {
   };
 
   componentDidUpdate() {
-    console.log('[Aop.js] componentDidUpdate');
+    console.log('[App.js] componentDidUpdate');
   }
 
   nameChangedHandler = (event, id ) => {
@@ -56,7 +60,7 @@ class App extends Component {
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState( {persons: persons} );
+    this.setState( {persons: persons, changeCounter: this.state.changeCounter + 1} );
   }
 
   deletePersonHandler = (personIndex) => {
@@ -69,7 +73,6 @@ class App extends Component {
     const doesShow = this.state.showPersons;
     this.setState( {showPersons: !doesShow} );
   }
-  
   
   render() {
     console.log('[App.js] render');
@@ -84,16 +87,20 @@ class App extends Component {
     }
 
     return (
-        <div className={classes.App}>
-          <Cockpit 
+      <Aux>
+          <button 
+          onClick={() => {
+            this.setState({ showCockpit: false })}
+          }>Remove Cockpit</button>
+          {this.state.showCockpit ? (<Cockpit 
           title={this.props.appTitle}
           showPersons={this.state.showPersons}
-          persons={this.state.persons}
-          clicked={this.togglePersonHandler}/>
+          personsLength={this.state.persons.length}
+          clicked={this.togglePersonHandler}/>) : null}
           {persons}
-        </div>
+      </Aux>
     );
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
